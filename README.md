@@ -2,6 +2,16 @@
 
 Set of useful tools for the CLI to work on various projects.
 
+## Run
+
+```bash
+# Install dependencies
+go install
+
+# Run the program
+go run cmd/jmctl/main.go
+```
+
 <!-- // jmctl
 //
 // Commands
