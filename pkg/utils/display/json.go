@@ -1,4 +1,4 @@
-package displayhelpers
+package display
 
 import (
 	"encoding/json"

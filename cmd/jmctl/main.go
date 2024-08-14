@@ -5,9 +5,10 @@ import (
 	"os"
 
 	goflags "github.com/jessevdk/go-flags"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/jhonatanmacazana/jmctl/internal/commands"
 	"github.com/jhonatanmacazana/jmctl/pkg/utils/ui"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() {

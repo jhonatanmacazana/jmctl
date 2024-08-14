@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/jhonatanmacazana/jmctl/pkg/utils/displayhelpers"
+	"github.com/jhonatanmacazana/jmctl/pkg/utils/display"
 )
 
 type Template struct {
@@ -34,7 +34,7 @@ func (command *TemplatesCommand) getAllTemplates() ([]Template, error) {
 func (command *TemplatesCommand) displayTemplates(templates []Template) error {
 	var err error
 	if command.Json {
-		err = displayhelpers.JsonPrint(templates)
+		err = display.JsonPrint(templates)
 		if err != nil {
 			return err
 		}
