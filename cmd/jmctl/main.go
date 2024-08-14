@@ -1,64 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"os"
-
-	goflags "github.com/jessevdk/go-flags"
-	log "github.com/sirupsen/logrus"
+	"time"
 
 	"github.com/jhonatanmacazana/jmctl/internal/commands"
-	"github.com/jhonatanmacazana/jmctl/pkg/utils/ui"
+	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	log.SetLevel(log.WarnLevel)
 
-	parser := goflags.NewParser(&commands.JmCtl, goflags.HelpFlag|goflags.PassDoubleDash)
-	parser.NamespaceDelimiter = "-"
+	templateCommand := commands.CreateTemplateCommand()
 
-	helpParser := goflags.NewParser(&commands.JmCtl, goflags.HelpFlag)
-	helpParser.NamespaceDelimiter = "-"
-
-	args, err := parser.Parse()
-	handleError(helpParser, err)
-
-	if len(args) > 0 {
-		fmt.Printf("Unknown argument '%s'.\n", args[0])
-		os.Exit(1)
+	app := &cli.App{
+		Name:     "jmctl",
+		Version:  "0.0.1",
+		Compiled: time.Now(),
+		Authors:  []*cli.Author{{Name: "Jhonatan Macazana"}},
+		Usage:    "Set of useful tools for the CLI to work on various projects.",
+		Commands: []*cli.Command{
+			templateCommand,
+		},
 	}
-}
 
-func handleError(helpParser *goflags.Parser, err error) {
-	if err != nil {
-		if err == commands.ErrShowHelpMessage {
-			showHelp(helpParser)
-		} else if flagsErr, ok := err.(*goflags.Error); ok && flagsErr.Type == goflags.ErrCommandRequired {
-			showHelp(helpParser)
-		} else if flagsErr, ok := err.(*goflags.Error); ok && flagsErr.Type == goflags.ErrHelp {
-			fmt.Println(err)
-			os.Exit(0)
-		} else {
-			fmt.Fprintf(ui.Stderr, "error: %s\n", err)
-		}
-
-		flagError := err.(*goflags.Error)
-		if flagError.Type == goflags.ErrHelp {
-			os.Exit(0)
-		}
-
-		if flagError.Type == goflags.ErrUnknownFlag {
-			fmt.Println("\nUse --help to view all available options.")
-			os.Exit(1)
-		}
-
-		fmt.Println("\nUse --help to view all available options.")
-		os.Exit(1)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
-}
-
-func showHelp(helpParser *goflags.Parser) {
-	helpParser.ParseArgs([]string{"-h"})
-	helpParser.WriteHelp(os.Stdout)
-	os.Exit(0)
 }

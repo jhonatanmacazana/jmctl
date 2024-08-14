@@ -4,36 +4,54 @@ import (
 	"fmt"
 
 	"github.com/jhonatanmacazana/jmctl/pkg/utils/display"
+	"github.com/urfave/cli/v2"
 )
 
-type Template struct {
+type Template struct{}
+
+func CreateTemplateCommand() *cli.Command {
+	return &cli.Command{
+		Name:    "template",
+		Aliases: []string{"te"},
+		Usage:   "list available templates",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    "all",
+				Aliases: []string{"A"},
+				Usage:   "show builds for the all teams that user has access to",
+			},
+			&cli.BoolFlag{
+				Name:  "json",
+				Usage: "Print command result as JSON",
+			},
+		},
+		Action: templateAction,
+	}
 }
 
-type TemplatesCommand struct {
-	AllTemplates bool `short:"a" long:"all" description:"Show builds for the all teams that user has access to"`
-	Json         bool `long:"json" description:"Print command result as JSON"`
-}
-
-func (command *TemplatesCommand) Execute([]string) error {
-	allTemplates, err := command.getAllTemplates()
+func templateAction(cCtx *cli.Context) error {
+	allTemplates, err := getAllTemplates()
 	if err != nil {
 		return nil
 	}
-	return command.displayTemplates(allTemplates)
+
+	jsonFlag := cCtx.Bool("json")
+
+	return displayTemplates(jsonFlag, allTemplates)
 }
 
-func (command *TemplatesCommand) getAllTemplates() ([]Template, error) {
+func getAllTemplates() ([]Template, error) {
 	allTemplates := []Template{}
 	return allTemplates, nil
 }
 
-// func (command *TemplatesCommand) validateCurrentTemplate(currentTeam Template) error {
+// func validateCurrentTemplate(currentTeam Template) error {
 // 	return nil
 // }
 
-func (command *TemplatesCommand) displayTemplates(templates []Template) error {
+func displayTemplates(jsonFlag bool, templates []Template) error {
 	var err error
-	if command.Json {
+	if jsonFlag {
 		err = display.JsonPrint(templates)
 		if err != nil {
 			return err
